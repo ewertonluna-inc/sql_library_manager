@@ -1,0 +1,26 @@
+{
+  "name": "sql_library-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ewertonluna/sql_library_manager.git"
+  },
+  "author": "Ewerton Luna",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ewertonluna/sql_library_manager/issues"
+  },
+  "homepage": "https://github.com/ewertonluna/sql_library_manager#readme",
+  "dependencies": {
+    "nodemon": "^2.0.4",
+    "pug": "^3.0.0",
+    "sequelize": "^5.21.13",
+    "sqlite3": "^4.2.0"
+  }
+}
