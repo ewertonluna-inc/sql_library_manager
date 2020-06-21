@@ -3,6 +3,11 @@ extends layout.pug
 block content
   h1 Update Book
   form(action="/books/" + book.id, method="post")
+    if validationErrors
+        h2(class="error") Ooooops!
+        ul(class="error")
+        each errorMessage in validationErrors
+          li= errorMessage
     p
       label(for="title") Title
       input(name="title", type="text",  id="title", value=book.title)
