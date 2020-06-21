@@ -18,11 +18,13 @@ function asyncHandler(cb){
 }
 
 /* Show the full list of books */
-router.get('/', asyncHandler(async (req, res) => {
-  const books = await Book.findAll({
-    order: [['createdAt', 'DESC']],
-  });
-  res.render('index', {books, title: "Books"});
+router.get('/', asyncHandler(async (req, res, next) => {
+  res.redirect('/books/page/1');
+  // const { pages, total } = await Book.paginate({paginate: 5})
+  // const books = await Book.findAll({
+  //   order: [['createdAt', 'DESC']],
+  // });
+  // res.render('index', {books, title: "Books"});
 }));
 
 /* Show create new book form */
@@ -65,12 +67,40 @@ router.post('/search', asyncHandler(async (req, res) => {
         `SELECT * FROM books WHERE year = ${search}`
       );
     }
-    
+
     if (books.length !== (await Book.findAll()).length) notAllBooksFound = true;
     res.render('index', {books, title: "Books", notAllBooksFound});
   } else {
     res.redirect('/');
   }
+}));
+
+router.get('/page', asyncHandler(async (req, res) => {
+  res.redirect('/books/page/1');
+}));
+
+router.get('/page/:page', asyncHandler(async (req, res, next) => {
+  let pagesIndexes= [];
+  const paginationOptions = {
+    page: req.params.page,
+    paginate: 10,
+    order: [['createdAt', 'DESC']]
+  };
+
+  const { docs, pages } = await Book.paginate(paginationOptions);
+  
+  // If any book is found
+  if (docs.length !== 0) {
+    for (let i = 0; i < pages; i++) {
+      pagesIndexes.push(i + 1);
+    }
+    res.render('index', {books: docs, pagesIndexes, title: "Books"});
+  } else {
+    res.status(404);
+    res.render('page-not-found');
+  }
+  
+  
 }));
 
 

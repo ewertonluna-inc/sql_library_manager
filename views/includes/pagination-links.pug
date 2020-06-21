@@ -1,0 +1,5 @@
+div.pagination
+  ul
+    each pageIndex in pagesIndexes
+      li
+        a(href="/books/page/" + pageIndex)= pageIndex

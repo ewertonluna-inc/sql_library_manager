@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const sequelizePaginate = require('sequelize-paginate');
 
 module.exports = (sequelize) => {
   class Book extends Sequelize.Model {}
@@ -23,5 +24,6 @@ module.exports = (sequelize) => {
     },
   }, { sequelize });
 
+  sequelizePaginate.paginate(Book);
   return Book;
 }
