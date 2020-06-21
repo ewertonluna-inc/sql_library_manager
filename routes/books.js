@@ -17,7 +17,7 @@ function asyncHandler(cb){
   }
 }
 
-/* Show the full list of books */
+/* Show the first listing of books */
 router.get('/', asyncHandler(async (req, res, next) => {
   res.redirect('/books/page/1');
 }));
