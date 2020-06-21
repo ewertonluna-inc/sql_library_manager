@@ -5,6 +5,8 @@ block content
   form(action="/books/search", method="post")
     input(name="search", type="text",  id="search-field")
     input(type="submit", value="Submit Search", id="search-submit")
+    if notAllBooksFound
+      include ./includes/all-books-button.pug
   p
     a(class="button", href="/books/new") Create New Book
   table

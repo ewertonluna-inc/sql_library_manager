@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { Book } = require('../db/index').models
+const { Book } = require('../db/index').models;
+const { Op } = require('../db/index').Sequelize;
 const errorHandler = require('../middleware/errorHandler');
+const book = require('../db/models/book');
+const { sequelize } = require('../db');
 
 /* Handler function to wrap each route. */
 function asyncHandler(cb){
@@ -44,6 +47,32 @@ router.post('/new', asyncHandler(async (req, res) => {
     }
   }
 }));
+
+router.post('/search', asyncHandler(async (req, res) => {
+  const search = req.body.search;
+  if (search) {
+    let books;
+    let notAllBooksFound;
+
+    if (isNaN(search)) {
+      [ books ] = await sequelize.query(
+        `SELECT * FROM books WHERE title LIKE "%${search}%" 
+          OR author LIKE "%${search}%" 
+          OR genre LIKE "%${search}%";`
+      );
+    } else {
+      [ books ] = await sequelize.query(
+        `SELECT * FROM books WHERE year = ${search}`
+      );
+    }
+    
+    if (books.length !== (await Book.findAll()).length) notAllBooksFound = true;
+    res.render('index', {books, title: "Books", notAllBooksFound});
+  } else {
+    res.redirect('/');
+  }
+}));
+
 
 /* Show the book detail form */
 router.get('/:id', asyncHandler(async (req, res) => {
@@ -91,11 +120,6 @@ router.post('/:id/delete', asyncHandler(async (req, res) => {
     res.status(404);
     res.render('page-not-found')
   }
-}));
-
-router.post('/search', asyncHandler(async (req, res) => {
-  // CANNOT MAKE THIS ROUTE TO WORK
-  next();
 }));
 
 module.exports = router;
