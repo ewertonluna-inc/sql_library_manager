@@ -20,11 +20,6 @@ function asyncHandler(cb){
 /* Show the full list of books */
 router.get('/', asyncHandler(async (req, res, next) => {
   res.redirect('/books/page/1');
-  // const { pages, total } = await Book.paginate({paginate: 5})
-  // const books = await Book.findAll({
-  //   order: [['createdAt', 'DESC']],
-  // });
-  // res.render('index', {books, title: "Books"});
 }));
 
 /* Show create new book form */
@@ -89,20 +84,17 @@ router.get('/page/:page', asyncHandler(async (req, res, next) => {
 
   const { docs, pages } = await Book.paginate(paginationOptions);
   
-  // If any book is found
+  // If any books are found
   if (docs.length !== 0) {
     for (let i = 0; i < pages; i++) {
       pagesIndexes.push(i + 1);
     }
-    res.render('index', {books: docs, pagesIndexes, title: "Books"});
+    res.render('index', {pagesIndexes, books: docs, title: "Books"});
   } else {
     res.status(404);
     res.render('page-not-found');
   }
-  
-  
 }));
-
 
 /* Show the book detail form */
 router.get('/:id', asyncHandler(async (req, res) => {

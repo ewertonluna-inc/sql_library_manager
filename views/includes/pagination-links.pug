@@ -1,5 +1,4 @@
+br
 div.pagination
-  ul
-    each pageIndex in pagesIndexes
-      li
-        a(href="/books/page/" + pageIndex)= pageIndex
+  each pageIndex in pagesIndexes
+    a(active class="button" href="/books/page/" + pageIndex)= pageIndex
