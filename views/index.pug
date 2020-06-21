@@ -2,6 +2,9 @@ extends layout.pug
 
 block content
   h1 Books
+  form(action="/books/search", method="post")
+    input(name="search", type="text",  id="search-field")
+    input(type="submit", value="Submit Search", id="search-submit")
   p
     a(class="button", href="/books/new") Create New Book
   table

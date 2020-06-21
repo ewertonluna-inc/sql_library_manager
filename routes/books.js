@@ -81,7 +81,7 @@ router.post('/:id', asyncHandler(async (req, res) => {
   
 }));
 
-// /* Deletes a book */
+/* Deletes a book */
 router.post('/:id/delete', asyncHandler(async (req, res) => {
   const book = await Book.findByPk(req.params.id);
   if (book) {
@@ -91,7 +91,11 @@ router.post('/:id/delete', asyncHandler(async (req, res) => {
     res.status(404);
     res.render('page-not-found')
   }
-  
+}));
+
+router.post('/search', asyncHandler(async (req, res) => {
+  // CANNOT MAKE THIS ROUTE TO WORK
+  next();
 }));
 
 module.exports = router;
