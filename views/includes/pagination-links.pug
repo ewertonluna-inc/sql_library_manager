@@ -1,4 +1,5 @@
 br
 div.pagination
-  each pageIndex in pagesIndexes
-    a(active class="button" href="/books/page/" + pageIndex)= pageIndex
+  if pagesIndexes
+    each pageIndex in pagesIndexes
+      a(active class="button" href="/books/page/" + pageIndex)= pageIndex

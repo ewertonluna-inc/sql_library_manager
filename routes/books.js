@@ -45,24 +45,33 @@ router.post('/new', asyncHandler(async (req, res) => {
   }
 }));
 
+// Search route for handling search input
 router.post('/search', asyncHandler(async (req, res) => {
   const search = req.body.search;
   if (search) {
-    let books;
+    const books = []
     let notAllBooksFound;
+    let results;
 
-    if (isNaN(search)) {
-      [ books ] = await sequelize.query(
-        `SELECT * FROM books WHERE title LIKE "%${search}%" 
-          OR author LIKE "%${search}%" 
-          OR genre LIKE "%${search}%";`
-      );
-    } else {
-      [ books ] = await sequelize.query(
-        `SELECT * FROM books WHERE year = ${search}`
-      );
+    [ results ] = await sequelize.query(
+      `SELECT * FROM books WHERE title LIKE "%${search}%" 
+        OR author LIKE "%${search}%" 
+        OR genre LIKE "%${search}%";`
+    );
+    results.map(book => books.push(book));
+    
+    // Only search in the 'year' column if 'search' is a number.
+    if (!isNaN(search)) {
+      [ results ] = await sequelize.query(`SELECT * FROM books WHERE year = ${search}`);
+      results.map(book => books.push(book));
+    }
+   
+    if (books.length === 0) {
+      return res.render('no-books-found')
     }
 
+    // If the books array's length isn't equal to the amount of books in the database, show 'Show all books' button
+    // using the notAllBooksFound locals
     if (books.length !== (await Book.findAll()).length) notAllBooksFound = true;
     res.render('index', {books, title: "Books", notAllBooksFound});
   } else {
@@ -84,7 +93,7 @@ router.get('/page/:page', asyncHandler(async (req, res, next) => {
 
   const { docs, pages } = await Book.paginate(paginationOptions);
   
-  // If any books are found
+  // If any books are found, create pagination links
   if (docs.length !== 0) {
     for (let i = 0; i < pages; i++) {
       pagesIndexes.push(i + 1);
