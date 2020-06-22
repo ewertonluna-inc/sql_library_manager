@@ -5,6 +5,7 @@ const { Op } = require('../db/index').Sequelize;
 const errorHandler = require('../middleware/errorHandler');
 const book = require('../db/models/book');
 const { sequelize } = require('../db');
+const { render } = require('pug');
 
 /* Handler function to wrap each route. */
 function asyncHandler(cb){
@@ -80,25 +81,29 @@ router.post('/search', asyncHandler(async (req, res) => {
 }));
 
 router.get('/page', asyncHandler(async (req, res) => {
-  res.redirect('/books/page/1');
+  res.redirect('/');
 }));
 
 router.get('/page/:page', asyncHandler(async (req, res, next) => {
-  let pagesIndexes= [];
-  const paginationOptions = {
-    page: req.params.page,
-    paginate: 10,
-    order: [['createdAt', 'DESC']]
-  };
-
-  const { docs, pages } = await Book.paginate(paginationOptions);
+  const page = req.params.page;
+  const limit = 10;
+  const numberOfPages = Math.ceil((await Book.count()) / limit)
   
-  // If any books are found, create pagination links
-  if (docs.length !== 0) {
-    for (let i = 0; i < pages; i++) {
-      pagesIndexes.push(i + 1);
+  // if 'page' is a number and between 1 and number of pages...
+  if (!isNaN(page) && page >= 1 && page <= numberOfPages) {
+    let pagesIndexes = [];
+    const offset = (page - 1) * limit;
+    const books = await Book.findAll({limit, offset});
+    
+    if (books.length > 0) {
+      for (let i = 0; i < numberOfPages; i++) {
+        pagesIndexes.push(i + 1);
+      }
+      return res.render('index', {books, pagesIndexes, title: "Books"});
+    } else {
+      return res.render('no-books-found');
     }
-    res.render('index', {pagesIndexes, books: docs, title: "Books"});
+
   } else {
     res.status(404);
     res.render('page-not-found');
