@@ -93,7 +93,11 @@ router.get('/page/:page', asyncHandler(async (req, res, next) => {
   if (!isNaN(page) && page >= 1 && page <= numberOfPages) {
     let pagesIndexes = [];
     const offset = (page - 1) * limit;
-    const books = await Book.findAll({limit, offset});
+    const books = await Book.findAll({
+      limit, 
+      offset,
+      order: [['createdAt', 'DESC']],
+    });
     
     if (books.length > 0) {
       for (let i = 0; i < numberOfPages; i++) {
